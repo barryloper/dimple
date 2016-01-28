@@ -16,11 +16,7 @@
             });
         }
         // Add
-        if (lineShape.nextSibling && lineShape.nextSibling.id) {
-            shapes = markers.enter().insert("circle", '#' + lineShape.nextSibling.id);
-        } else {
-            shapes = markers.enter().append("circle");
-        }
+        shapes = markers.enter().append("circle");
         shapes
             .attr("id", function (d) {
                 return dimple._createClass([d.key + " Marker"]);
