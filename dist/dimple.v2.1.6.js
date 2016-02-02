@@ -661,6 +661,7 @@
 
         // The group within which to put all of this chart's objects
         this._group = svg.append("g");
+        this._group.attr('class', 'dimple-chart');
         // The group within which to put tooltips.  This is not initialised here because
         // the group would end up behind other chart contents in a multi chart output.  It will
         // therefore be added and removed by the mouse enter/leave events
@@ -1285,7 +1286,11 @@
 
                         // Loop again to calculate shares
                         for (i = 0; i < returnData.length; i += 1) {
-                            returnData[i].piePct = (returnData[i].pValue / pieDictionary[returnData[i].pieKey].total);
+                            if (pieDictionary[returnData[i].pieKey].total === 0) {
+                                returnData[i].piePct = 0;
+                            } else {
+                                returnData[i].piePct = (returnData[i].pValue / pieDictionary[returnData[i].pieKey].total);
+                            }
                             returnData[i].startAngle = pieDictionary[returnData[i].pieKey].angle;
                             returnData[i].endAngle = returnData[i].startAngle + returnData[i].piePct * (endAngle - startAngle);
                             pieDictionary[returnData[i].pieKey].angle = returnData[i].endAngle;
@@ -2563,6 +2568,9 @@
         this.tooltipFontFamily = "sans-serif";
         // Help: http://github.com/PMSI-AlignAlytics/dimple/wiki/dimple.axis#wiki-radius
         this.radius = "auto";
+        // The group within which to put all of this series's objects
+        this._group = chart._group.append("g");
+        this._group.attr('class', 'dimple-series-group-' + chart.series.length);
 
         // Any event handlers joined to this series
         this._eventHandlers = [];
@@ -3442,7 +3450,7 @@
             }
 
             if (series.shapes === null || series.shapes === undefined) {
-                theseShapes = chart._group.selectAll("." + className).data(areaData);
+                theseShapes = series._group.selectAll("." + className).data(areaData);
             } else {
                 theseShapes = series.shapes.data(areaData, function (d) { return d.key; });
             }
@@ -3536,7 +3544,7 @@
             }
 
             if (series.shapes === null || series.shapes === undefined) {
-                theseShapes = chart._group.selectAll("." + classes.join(".")).data(chartData);
+                theseShapes = series._group.selectAll("." + classes.join(".")).data(chartData);
             } else {
                 theseShapes = series.shapes.data(chartData, function (d) { return d.key; });
             }
@@ -3655,7 +3663,7 @@
             }
 
             if (series.shapes === null || series.shapes === undefined) {
-                theseShapes = chart._group.selectAll("." + classes.join(".")).data(chartData);
+                theseShapes = series._group.selectAll("." + classes.join(".")).data(chartData);
             } else {
                 theseShapes = series.shapes.data(chartData, function (d) {
                     return d.key;
@@ -3896,7 +3904,7 @@
             }
 
             if (series.shapes === null || series.shapes === undefined) {
-                theseShapes = chart._group.selectAll("." + className).data(lineData);
+                theseShapes = series._group.selectAll("." + className).data(lineData);
             } else {
                 theseShapes = series.shapes.data(lineData, function (d) { return d.key; });
             }
@@ -4050,7 +4058,7 @@
             }
 
             if (series.shapes === null || series.shapes === undefined) {
-                theseShapes =  chart._group.selectAll("." + classes.join(".")).data(chartData);
+                theseShapes =  series._group.selectAll("." + classes.join(".")).data(chartData);
             } else {
                 theseShapes = series.shapes.data(chartData, function (d) { return d.key; });
             }
@@ -4244,7 +4252,7 @@
             shapes;
         if (series.lineMarkers) {
             if (series._markerBacks === null || series._markerBacks === undefined || series._markerBacks[lineDataRow.keyString] === undefined) {
-                markerBacks = chart._group.selectAll("." + markerBackClasses.join(".")).data(lineDataRow.markerData);
+                markerBacks = series._group.selectAll("." + markerBackClasses.join(".")).data(lineDataRow.markerData);
             } else {
                 markerBacks = series._markerBacks[lineDataRow.keyString].data(lineDataRow.markerData, function (d) { return d.key; });
             }
@@ -4312,7 +4320,7 @@
 
         // Deal with markers in the same way as main series to fix #28
         if (series._markers === null || series._markers === undefined || series._markers[lineDataRow.keyString] === undefined) {
-            markers = chart._group.selectAll("." + markerClasses.join(".")).data(lineDataRow.markerData);
+            markers = series._group.selectAll("." + markerClasses.join(".")).data(lineDataRow.markerData);
         } else {
             markers = series._markers[lineDataRow.keyString].data(lineDataRow.markerData, function (d) {
                 return d.key;
